@@ -3,9 +3,16 @@ import hashlib
 import json
 import logging
 import os
-import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
+
+
+def _utc_now_iso():
+    # Existing provenance files on disk end the stamp with "Z", so keep
+    # that exact shape instead of switching to a +00:00 suffix and making
+    # old and new records format differently. utcnow() itself is gone in
+    # spirit (deprecated), hence now(timezone.utc).
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f") + "Z"
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -28,18 +35,23 @@ class ProvenanceRecorder:
         self.provenance_file = provenance_file
         self.provenance_data = {
             "artifact": self.artifact_path,
-            "created_at": datetime.utcnow().isoformat() + "Z",
+            "created_at": _utc_now_iso(),
             "build_steps": [],
             "artifact_hash": None,
         }
         self.load_existing_provenance()
 
     def load_existing_provenance(self):
-         """Loads existing provenance data if the file exists."""
-         if os.path.exists(self.provenance_file):
+        """Loads existing provenance data if the file exists."""
+        if os.path.exists(self.provenance_file):
             try:
                 with open(self.provenance_file, 'r') as f:
                     self.provenance_data = json.load(f)
+                # A file written by an older run may lack keys the rest of
+                # the class assumes. Fill the gaps instead of failing later
+                # with a KeyError far from the actual cause.
+                self.provenance_data.setdefault("build_steps", [])
+                self.provenance_data.setdefault("artifact_hash", None)
             except (FileNotFoundError, json.JSONDecodeError) as e:
                 logging.warning(f"Could not load existing provenance file: {e}. Starting fresh.")
 
@@ -55,7 +67,7 @@ class ProvenanceRecorder:
         try:
             step = {
                 "command": command,
-                "executed_at": datetime.utcnow().isoformat() + "Z",
+                "executed_at": _utc_now_iso(),
             }
             if version:
                 step["version"] = version
@@ -78,6 +90,9 @@ class ProvenanceRecorder:
 
             hasher = hashlib.new(algorithm)
             with open(self.artifact_path, "rb") as f:
+                # Chunked reads keep a multi-gigabyte artifact out of
+                # memory. The digest does not depend on chunk size, so
+                # 4096 is a buffer choice, not part of the record format.
                 while chunk := f.read(4096):
                     hasher.update(chunk)
 
