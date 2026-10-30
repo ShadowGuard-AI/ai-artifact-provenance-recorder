@@ -1,3 +1,5 @@
+![Banner](banner.png)
+
 # ai-Artifact-Provenance-Recorder
 Records the build steps (commands, versions) that created an artifact. Outputs a JSON provenance file that can be used to verify the artifact's lineage. - Focused on Tools for generating, verifying, and managing the integrity of software artifacts (e.g., executables, scripts, configuration files). Focus on preventing supply chain attacks and unauthorized modifications by integrating hash comparison and digital signature verification into build/deployment processes.
 
