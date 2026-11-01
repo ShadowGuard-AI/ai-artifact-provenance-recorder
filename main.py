@@ -52,7 +52,17 @@ class ProvenanceRecorder:
                 # with a KeyError far from the actual cause.
                 self.provenance_data.setdefault("build_steps", [])
                 self.provenance_data.setdefault("artifact_hash", None)
+                # Loading replaces the fresh dict outright, which is
+                # what keeps the original created_at stamp from the
+                # first run instead of restamping it on every later run.
+                # Only these two keys get repaired, though: a file
+                # missing artifact or created_at stays missing, and
+                # nothing downstream happens to read those two keys.
             except (FileNotFoundError, json.JSONDecodeError) as e:
+                # Starting fresh here means the next save overwrites the
+                # unreadable file without keeping a copy. For a corrupt
+                # provenance file that trade loses the old record, and
+                # this warning is the only trace it ever existed.
                 logging.warning(f"Could not load existing provenance file: {e}. Starting fresh.")
 
 
@@ -69,6 +79,10 @@ class ProvenanceRecorder:
                 "command": command,
                 "executed_at": _utc_now_iso(),
             }
+            # No version means no version key at all, not a null. Anyone
+            # reading these files has to test for the key, and I prefer
+            # that to a file full of empty fields pretending I recorded
+            # something I did not.
             if version:
                 step["version"] = version
             self.provenance_data["build_steps"].append(step)
@@ -163,6 +177,12 @@ def main():
 
         recorder = ProvenanceRecorder(args.artifact_path, args.provenance_file)
 
+        # This order matters. The step is added in memory first, the
+        # hash is taken second, and the save is last, so a hashing
+        # failure, say an algorithm name hashlib does not know, leaves
+        # the file on disk untouched and the step is lost with the
+        # process. I would rather lose the step than write a record
+        # claiming a hash that was never taken.
         if args.command:
             recorder.add_build_step(args.command, args.version)
 
