@@ -3,113 +3,63 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ai-Artifact-Provenance-Recorder: Spider Web Dew Census</title>
-<meta name="description" content="ai-Artifact-Provenance-Recorder records the build steps that created an artifact, computes the artifact hash, and writes both into a JSON provenance file. It records hashes only.">
+<title>ai-Artifact-Provenance-Recorder: The Accession Registry</title>
+<meta name="description" content="Records the build steps, commands and versions, that created an artifact, computes the artifact hash, and writes both into a JSON provenance file. It records hashes only: it does not verify digital signatures and does not compare against an expected hash.">
 <style>
-@font-face{font-family:'Asta Sans';src:url('fonts/AstaSans.ttf') format('truetype');}
-@font-face{font-family:'Alegreya Sans';src:url('fonts/AlegreyaSans.ttf') format('truetype');}
-:root{--blue:#344a6e;--throat:#f7f5ec;--soot:#262422;--brick:#a46450;--silver:#c9cfc4}
-*{box-sizing:border-box}
-body{margin:0;background:var(--blue);color:#e8e9e2;font-family:'Alegreya Sans',sans-serif;line-height:1.65;border-left:2px solid rgba(247,245,236,.5);background-image:repeating-linear-gradient(37deg,transparent 0 210px,rgba(247,245,236,.16) 210px 211.5px,transparent 211.5px 420px)}
-h1,h2{font-family:'Asta Sans',sans-serif;color:var(--throat)}
-.hero{padding:2rem 6vw 0;max-width:1000px;margin:0 auto}
-.hero img.banner{width:100%;height:auto;display:block}
-.logo{width:180px;height:auto;background:var(--throat);padding:6px}
-nav{display:flex;flex-wrap:wrap;gap:.5rem 1.6rem;padding:1rem 0 .4rem}
-main{padding:0 6vw 3rem;max-width:1000px;margin:0 auto}
-.card{background:var(--throat);color:var(--soot);padding:1.2rem 1.5rem;margin:1.7rem 0;border-top:2.5px solid var(--blue);box-shadow:0 5px 0 -2.5px var(--blue);position:relative}
-.card h2{color:var(--soot);border-bottom:1.5px solid var(--soot);padding-bottom:.3rem}
-.card .entry{font-family:'Asta Sans',sans-serif;font-size:.78rem;letter-spacing:.16em;color:var(--blue)}
-.card code,.card pre{color:var(--soot)}
-pre{background:#eceadf;padding:1rem;overflow-x:auto;font-size:.92rem}
-.hubbtn{display:inline-flex;align-items:center;gap:.6rem;background:none;border:none;text-decoration:none;margin:.35rem .8rem .35rem 0;cursor:pointer;font-family:'Asta Sans',sans-serif;color:var(--throat);font-size:1rem;padding:.2rem}
-.hubbtn .hub{width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 50% 50%,#f7f5ec 0 3px,#3a3a38 3.5px 12px,#55534e 13px 19px,#2c2c2a 20px);position:relative;flex:none;transition:transform .12s}
-.hubbtn .hub:before{content:'';position:absolute;inset:4px;border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(247,245,236,.55) 0 1.5deg,transparent 1.5deg 30deg)}
-.hubbtn:hover .hub{background:radial-gradient(circle at 50% 50%,#fff 0 3.5px,#3a3a38 4px 12px,#6a675f 13px 19px,#2c2c2a 20px)}
-.hubbtn:active .hub{transform:rotate(4deg) scale(.93)}
-.hubbtn:focus-visible{outline:2.5px solid var(--brick);outline-offset:3px}
-a{color:#ffd9a8;position:relative}
-a:before{content:'';position:absolute;left:-2px;top:-.55em;width:1.6px;height:.55em;background:var(--throat)}
-a:after{content:'';position:absolute;left:-4.4px;top:-.55em;width:6px;height:6px;border-radius:50%;background:#eef6fa;transition:top .18s}
-a:hover:after{top:-.12em}
-a:active:after{transform:translateX(1.5px)}
-.card a{color:#7c4433}
-.card a:before{background:var(--blue)}
-.card a:after{background:#8fb6cc}
-.hubbtn:before,.hubbtn:after{content:none}
-.slip{background:#fdfcf6;color:var(--soot);padding:.9rem 1.2rem;border:1.5px solid var(--blue);margin:1rem 0;position:relative}
-.slip:before{content:'';position:absolute;top:-7px;right:14px;width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 38% 34%,#fff 0 2px,#bcd2e0 3px 5px,#7d99ad 6px)}
-.slip h3{font-family:'Asta Sans',sans-serif;margin:.1rem 0 .4rem}
-.trail{height:12px;margin:2.1rem 0;background:linear-gradient(to right,rgba(201,207,196,.15),var(--silver) 50%,rgba(201,207,196,.15));box-shadow:0 4px 0 -1px rgba(201,207,196,.4)}
-code{font-family:ui-monospace,monospace}
-footer{padding:1rem 6vw 2.4rem;max-width:1000px;margin:0 auto}
+@font-face{font-family:'Spectral SC';src:url('fonts/SpectralSC-400.woff2') format('woff2');font-weight:400}
+@font-face{font-family:'Spectral SC';src:url('fonts/SpectralSC-600.woff2') format('woff2');font-weight:600}
+@font-face{font-family:'Spectral SC';src:url('fonts/SpectralSC-700.woff2') format('woff2');font-weight:700}
+@font-face{font-family:'Be Vietnam Pro';src:url('fonts/BeVietnamPro-400.woff2') format('woff2');font-weight:400}
+@font-face{font-family:'Be Vietnam Pro';src:url('fonts/BeVietnamPro-500.woff2') format('woff2');font-weight:500}
+@font-face{font-family:'Be Vietnam Pro';src:url('fonts/BeVietnamPro-600.woff2') format('woff2');font-weight:600}
+@font-face{font-family:'Be Vietnam Pro';src:url('fonts/BeVietnamPro-700.woff2') format('woff2');font-weight:700}
+:root{--cream:#f5efe0;--paper:#fbf7ec;--oak:#6e5136;--oakdk:#46331f;--inky:#1e1c18;--red:#b3352b;--line:#ded2b8;--ink:#2a2721}
+*{box-sizing:border-box} body{margin:0;background:#e9e0c9;color:var(--ink);font-family:'Be Vietnam Pro',sans-serif;line-height:1.65}
+h1,h2{font-family:'Spectral SC',serif}
+.hero{background:linear-gradient(170deg,#86663f 0%,var(--oak) 55%,var(--oakdk) 100%);padding:2.2rem 6vw 1.8rem;border-bottom:8px solid var(--red)}
+.hero .inner{max-width:1020px;margin:0 auto}
+.hero img.wide{width:100%;height:auto;display:block;border:5px solid var(--cream);border-radius:4px;box-shadow:0 4px 18px rgba(0,0,0,.45)}
+.hero h1{margin:1.1rem 0 .3rem;font-size:2.2rem;font-weight:700;color:#fdf9ee}
+.hero p{max-width:44rem;color:#f2ead2}
+.hero a{color:#ffb9ae}
+main{padding:0 6vw 3rem;max-width:1020px;margin:0 auto}
+.card{background:var(--paper);border:1px solid var(--line);border-top:8px solid var(--oak);padding:1.2rem 1.5rem;margin:1.6rem 0;box-shadow:0 2px 8px rgba(55,40,18,.16)}
+.card.red{border-top-color:var(--red)}
+.card h2{margin:.1rem 0 .5rem;font-size:1.5rem;font-weight:600;color:var(--oakdk)}
+.card p{margin:.4rem 0}
+.strip{background:var(--inky);color:#f2ecd9;padding:1rem 1.2rem;overflow-x:auto;font-family:ui-monospace,Menlo,monospace;font-size:.92rem;border-radius:4px;border-left:6px solid var(--red)}
+.btn{display:inline-block;background:var(--red);color:#fff;font-family:'Be Vietnam Pro',sans-serif;font-weight:600;text-decoration:none;padding:.55rem 1.1rem;border-radius:3px;margin:.3rem .4rem .3rem 0}
+.btn:hover{background:var(--cream);color:var(--red)}.btn:active{transform:translateY(2px)}
+.btn:focus-visible{outline:2px dashed var(--red);outline-offset:3px}
+a{color:var(--red);font-weight:600}
+table{border-collapse:collapse}td{padding:.2rem .9rem .2rem 0;vertical-align:top}
+td:first-child{font-weight:600;color:var(--oakdk);white-space:nowrap}
+ul{margin:.4rem 0;padding-left:1.2rem}li{margin:.25rem 0}
+.small{font-size:.92rem}
+footer{padding:0 6vw 2.5rem;max-width:1020px;margin:0 auto;color:#857551}
 </style>
 </head>
 <body>
 <header class="hero">
-<img class="banner" src="assets/intro-banner.png" alt="One dew heavy orb web at close range, with more webs as pale discs in the hedge behind it">
-<img class="logo" src="assets/logo.png" alt="A dew beaded orb web with an anchor thread running out of the frame">
-<h1>ai-Artifact-Provenance-Recorder</h1>
-<p>A field log walked from first entry to last: one artifact at a time, its build steps and its hash written down while the information is at hand.</p>
-<nav>
-<a href="#recorded">What gets recorded</a>
-<a href="#requirements">Requirements</a>
-<a href="#example">A completed entry</a>
-<a href="#fields">The fields</a>
-<a href="https://github.com/ShadowGuard-AI/ai-artifact-provenance-recorder">GitHub</a>
-</nav>
-<p><a class="hubbtn" href="https://github.com/ShadowGuard-AI/ai-artifact-provenance-recorder"><span class="hub"></span>Record This Artifact</a>
-<a class="hubbtn" href="#example"><span class="hub"></span>See a Completed Entry</a>
-<a class="hubbtn" href="#fields"><span class="hub"></span>List the Fields</a></p>
+<div class="inner">
+<img class="wide" src="assets/banner.png" alt="A museum registry desk with the great accession book open at its centre, a newly arrived bronze object with its tied tag resting on the page and a small red accession stamp mark beside it, oak shelves of already registered objects standing in ordered rows behind the desk and a red stamp waiting on its pad">
+<h1>ai-Artifact-Provenance-Recorder</h1><p>Records the build steps (commands, versions) that created an artifact, computes the artifact hash, and writes both into a JSON provenance file that can be used to check the artifact's lineage later.</p><p><a class="btn" href="https://github.com/ShadowGuard-AI/ai-artifact-provenance-recorder">Open the repo</a> <a class="btn" href="#usage">Usage</a></p>
+</div>
 </header>
 <main>
-<section class="card" id="recorded">
-<span class="entry">ENTRY 1</span>
-<h2>What Gets Recorded</h2>
-<p>ai-Artifact-Provenance-Recorder records the build steps that created an artifact, meaning the commands and versions involved, computes the artifact hash, and writes both into a JSON provenance file, so the artifact lineage can be checked later.</p>
-<div class="slip">
-<h3>Hashes Only, Nothing Verified</h3>
-<p>It records hashes only: it does not verify digital signatures, and it does not compare the artifact against an expected hash.</p>
-</div>
-</section>
-<div class="trail"></div>
-<section class="card" id="requirements">
-<span class="entry">ENTRY 2</span>
-<h2>Nothing Borrowed</h2>
-<p>Python 3, standard library only, no third party dependencies in this repository.</p>
-</section>
-<div class="trail"></div>
-<section class="card" id="example">
-<span class="entry">ENTRY 3</span>
-<h2>a Completed Entry</h2>
-<p>Install by cloning:</p>
-<pre>git clone https://github.com/ShadowGuard-AI/ai-artifact-provenance-recorder</pre>
-<p>The verified example, exactly as documented:</p>
-<pre>python3 main.py report.pdf --provenance_file provenance.json --command "make build" --version "1.0"</pre>
-<p>It produces a <code>provenance.json</code> holding the artifact path, a UTC creation stamp, the build step, and the sha256 hash of the file.</p>
-</section>
-<div class="trail"></div>
-<section class="card" id="fields">
-<span class="entry">ENTRY 4</span>
-<h2>The Fields and Their Resting Values</h2>
-<pre>python3 main.py &lt;artifact_path&gt; [--provenance_file FILE] [--command COMMAND] [--version VERSION] [--hash_algorithm ALGORITHM]</pre>
-<p><code>artifact_path</code> is required: the path to the artifact. A missing artifact logs an error and exits 1.</p>
-<p><code>--provenance_file</code> rests at <code>provenance.json</code>.</p>
-<p><code>--command</code> records the command executed to build the artifact.</p>
-<p><code>--version</code> records the version of the tool used to build it.</p>
-<p><code>--hash_algorithm</code> rests at <code>sha256</code> and accepts any algorithm name Python <code>hashlib</code> accepts.</p>
-<p><code>-h</code> and <code>--help</code> show help.</p>
-</section>
-<div class="trail"></div>
-<section class="card">
-<span class="entry">ENTRY 5</span>
-<h2>The Closing Line of the Log</h2>
-<p>Licence as printed in the README: Copyright (c) ShadowGuard-AI.</p>
-<p>The README promises no verification service of any kind. A visitor who needs signature checking or comparison against a known hash is told here, at the end, that this recorder does neither and never claimed to.</p>
-</section>
+<section class="card" id="usage"><h2>A verified example</h2><div class="strip">python3 main.py report.pdf --provenance_file provenance.json --command "make build" --version "1.0"</div><p>This writes <code>provenance.json</code> with the artifact path, a UTC creation stamp, the build step, and the sha256 hash of the file.</p></section>
+<section class="card"><h2>Usage and parameters</h2><div class="strip">python3 main.py &lt;artifact_path&gt; [--provenance_file FILE] [--command COMMAND] [--version VERSION] [--hash_algorithm ALGORITHM]</div><table>
+<tr><td><code>artifact_path</code></td><td>path to the artifact (required). A missing artifact logs an error and exits 1</td></tr>
+<tr><td><code>--provenance_file</code></td><td>name of the provenance file (default: <code>provenance.json</code>)</td></tr>
+<tr><td><code>--command</code></td><td>command executed to build the artifact</td></tr>
+<tr><td><code>--version</code></td><td>version of the tool used to build the artifact</td></tr>
+<tr><td><code>--hash_algorithm</code></td><td>hashing algorithm name accepted by Python <code>hashlib</code> (default: <code>sha256</code>)</td></tr>
+<tr><td><code>-h</code> / <code>--help</code></td><td>show help and exit</td></tr>
+</table></section>
+<section class="card red"><h2>Hashes only, nothing verified</h2><p>This recorder writes down commands, versions, and the artifact hash. It records hashes only: it does not verify digital signatures, and it does not compare the artifact against an expected hash. The registry entry is a record of how the artifact came to be, not a proof about it.</p></section>
+<section class="card"><h2>Requirements</h2><p>Python 3 with only the standard library. This repository has no third party dependencies.</p></section>
+<section class="card"><h2>The files</h2><p class="small"><code>main.py</code>, the recorder itself. <code>requirements.txt</code>, present and effectively empty, matching the standard library only rule. <code>LICENSE</code>, the MIT License. Full notes are in the <a href="https://github.com/ShadowGuard-AI/ai-artifact-provenance-recorder">repo README</a>.</p></section>
 </main>
-<footer>
-<p>Theme: a spider web dew census along a hedge at first light. Type: Asta Sans for headings, Alegreya Sans for reading, both SIL Open Font License 1.1. No lettering reference is used for this project; lettering follows Asta Sans itself.</p>
-</footer>
+<footer><p>Every object entered in the book the moment it is made: who built it, with what, and its fingerprint.</p></footer>
 </body>
 </html>
