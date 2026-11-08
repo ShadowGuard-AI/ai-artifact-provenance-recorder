@@ -1,8 +1,6 @@
-![One dew heavy orb web at close range, more webs as pale discs in the hedge behind it](intro-banner.png)
-
 # ai-Artifact-Provenance-Recorder
 
-![A hedge at first light counted web by web, the name on a tally board at the gate post](banner.png)
+![Wordmark banner: a museum registry desk with the great accession book open at its centre, a newly arrived bronze object with its tied tag resting on the page and a small red accession stamp mark beside it, oak shelves of already registered objects standing in ordered rows behind the desk and a red stamp waiting on its pad](banner.png)
 
 ![Animated census in three bands: hedge discs brightening, beads forming along one spiral, grass swaying](scene.svg)
 
