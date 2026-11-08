@@ -1,6 +1,10 @@
+![Intro scenery: a gloved hand bringing a wooden stamp down onto the open registry page beside the bronze object's tag, the fresh impression a plain red square of bars with no letter in it, the bronze ring resting on its felt pad at the page edge](intro-banner.png)
+
 # ai-Artifact-Provenance-Recorder
 
-![Wordmark banner: a museum registry desk with the great accession book open at its centre, a newly arrived bronze object with its tied tag resting on the page and a small red accession stamp mark beside it, oak shelves of already registered objects standing in ordered rows behind the desk and a red stamp waiting on its pad](banner.png)
+![Wordmark banner: a museum registry room with tall oak shelves of tagged objects in ordered rows, the great accession book open on the desk in front with two plain red stamp squares on its page and a tagged bronze object resting beside them, a registrar at work at a desk behind](banner.png)
+
+<p align="center"><img src="logo.png" alt="ai-artifact-provenance-recorder logo: a small bronze ring brooch with a plain tag tied on with string, resting on the open page of a cream registry book beside a red stamp impression of plain bars inside a square border, dated entry lines down the page" width="200"></p>
 
 ![Animated census in three bands: hedge discs brightening, beads forming along one spiral, grass swaying](scene.svg)
 
