@@ -8,8 +8,6 @@
 
 ![Animated census in three bands: hedge discs brightening, beads forming along one spiral, grass swaying](scene.svg)
 
-# ai-Artifact-Provenance-Recorder
-
 Records the build steps (commands, versions) that created an artifact, computes the artifact hash, and writes both into a JSON provenance file that can be used to check the artifact's lineage later. It records hashes only: it does not verify digital signatures, and it does not compare the artifact against an expected hash.
 
 ## Install
@@ -20,13 +18,13 @@ Records the build steps (commands, versions) that created an artifact, computes 
 
 ## Usage
 
-```
+```sh
 python3 main.py <artifact_path> [--provenance_file FILE] [--command COMMAND] [--version VERSION] [--hash_algorithm ALGORITHM]
 ```
 
 Verified example:
 
-```
+```sh
 python3 main.py report.pdf --provenance_file provenance.json --command "make build" --version "1.0"
 ```
 
